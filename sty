@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View Complaints</title>
+  <style>
+    .popup {
+      position: fixed;
+      display: none;
+      width: 50%;
+      height: 50%;
+      top: 25%;
+      left: 25%;
+      background-color: white;
+      padding: 20px;
+      border: 1px solid black;
+      box-shadow: 2px 2px 10px #333;
+    }
+    .popup img {
+      width: 100%;
+      height: 100%;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: white;
+      padding: 5px 10px;
+      border: 1px solid black;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<table>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Mobile Number</td>
+      <th>Complaint</th>
+      <th>Image</th>
+      <th>Date</th>
+    </tr>
+    <?php foreach($complaints as $complaint): ?>
+      <tr>
+        <td><?php echo $complaint['id']; ?></td>
+        <td><?php echo $complaint['name']; ?></td>
+        <td><?php echo $complaint['email']; ?></td>
+        <td><?php echo $complaint['mobilenumber']; ?></td>
+         <td><?php echo $complaint['complaint']; ?></td>
+        <td><button class="view-image-btn" data-image="<?php echo $complaint['image']; ?>">View Image</button></td>
+        <td><?php echo $complaint['created_at']; ?></td>
+      </tr>
+    <?php endforeach; ?>
+  </table>
+
+  <div class="popup">
+    <span class="close-btn">&times;</span>
+    <img src="" alt="Complaint Image">
+  </div>
+
+  <script>
+    const viewImageBtns = document.querySelectorAll('.view-image-btn');
+    const popup = document.querySelector('.popup');
+    const closeBtn = document.querySelector('.close-btn');
+    const popupImage = document.querySelector('.popup img');
+
+    viewImageBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        popup.style.display = 'block';
+        popupImage.src = this.dataset.image;
+      });
+    });
+
+    closeBtn.addEventListener('click', function() {
+      popup.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
