@@ -1,0 +1,74 @@
+<?php
+
+if (isset($_POST['bill_amount']) && isset($_POST['state'])) {
+  $total_amt = $_POST['bill_amount'];
+  $state = $_POST['state'];
+
+  // GST rates and tax type based on state
+  if ($state === 'Rajasthan') {
+    $cgstRate = 9;
+    $sgstRate = 9;
+    $igstRate = 0;
+    $taxType = 'CGST and SGST';
+  } else { 
+    $cgstRate = 0;
+    $sgstRate = 0;
+    $igstRate = 18;
+    $taxType = 'IGST';
+  }
+
+  // check if discount code has been entered
+  if (isset($_POST['discount_code'])) {
+    $discount_code = $_POST['discount_code'];
+    // check if discount code is valid
+    $query = "SELECT discount_amount FROM discounts WHERE code = '$discount_code'";
+    $result = mysqli_query($connection, $query);
+    if (mysqli_num_rows($result) > 0) {
+      // apply discount
+      $discount = mysqli_fetch_assoc($result)['discount_amount'];
+      $total_amt -= $discount;
+      $discount_code_applied = true;
+      $_SESSION['discount_code'] = $discount_code;
+      $_SESSION['discount_amount'] = $discount;
+    } else {
+      $invalid_discount_code = true;
+    }
+  }
+
+  // calculate GST amounts and total amount
+  $cgstAmount = ($total_amt * $cgstRate) / 100;
+  $sgstAmount = ($total_amt * $sgstRate) / 100;
+  $igstAmount = ($total_amt * $igstRate) / 100;
+  $totalAmount = $total_amt + $cgstAmount + $sgstAmount + $igstAmount;
+  $totalCGST_SGST_Amount = $cgstAmount + $sgstAmount;
+
+  // display bill summary
+  echo "<h1>Bill Summary</h1>";
+  echo "Bill Amount: $" . $total_amt . "<br>";
+  echo $taxType . " Rate: " . ($taxType === 'IGST' ? $igstRate : $cgstRate) . "%<br>";
+  if ($taxType !== 'IGST') {
+    echo "CGST Amount: $" . $cgstAmount . "<br>";
+    echo "SGST Amount: $" . $sgstAmount . "<br>";
+    echo "CGST and SGST Amount: $" . $totalCGST_SGST_Amount . "<br>";
+  }
+  echo $taxType . " Amount: $" . ($taxType === 'IGST' ? $igstAmount : '') . "<br>";
+  if (isset($discount_code_applied)) {
+    echo "Discount applied (" . $discount_code . "): $" . $discount . "<br>";
+  }
+  echo "Total Amount: $" . $totalAmount . "<br>";
+
+  // create discount code form
+  echo "<form method='POST'>";
+  echo "Enter discount code: <input type='text' name='discount_code'><br>";
+  echo "<input type='submit' value='Apply Discount Code'>";
+  echo "</form>";
+
+  // check if a discount code has been entered but not applied
+  if (isset($invalid_discount_code)) {
+    echo "Invalid discount code.<br>";
+  }
+} else {
+  echo "Please enter bill amount and state to calculate GST.";
+}
+
+?>
