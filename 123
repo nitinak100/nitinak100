@@ -1,0 +1,164 @@
+<link href="https://fonts.googleapis.com/css?family=Raleway:500:600|Roboto&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+<link rel="stylesheet" href="chatbot.css">
+
+<div id="chat-app" class="chat-app">
+  
+  <div class="chat-app_toggle toggle">
+    <div class="icon send">
+      <i class="fas fa-paper-plane"></i>
+    </div>
+    <div class="icon open">
+      <i class="fas fa-comment"></i>
+    </div>
+  </div>
+  
+  <div class="chat-app_box">
+    <div class="chat-app_header">
+      
+      <div class="close"></div>
+      
+      <div class="branding">
+        <div class="avatar is-online">
+          <img src="img/chartbot.png" alt="">
+        </div>
+        
+        <div class="content">
+          <p class="title">ChatBot</p>
+          <p class="subtitle">Hello how can i help you</p>
+        </div>
+        
+      </div>
+    
+    </div>
+    
+    <div class="chat-app_content">
+      <div class="messages">
+        
+        <!-- <div class="message">
+          <p class="text">Message user</p>
+        </div> 
+        
+        <div class="message reply">
+          <p class="text">hello:how can i help you</p>
+        </div> -->
+        
+      </div>
+    </div>
+    
+    <div class="chat-app_footer">
+      <input class="chat-input" type="text" placeholder="Type..." />
+    </div>
+    
+  </div>
+</div>
+
+
+<script>
+  function chatInit(selector) {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.LIVE_CHAT_UI) {
+      let chat = document.querySelector(selector);
+      let toggles = chat.querySelectorAll('.toggle')
+      let close = chat.querySelector('.close')
+      let send = chat.querySelector('.send')
+      
+      toggles.forEach( toggle => {
+        toggle.addEventListener('click', () => {
+          chat.classList.add('is-active')
+        })
+      })
+      
+      send.addEventListener('click', () => {
+        sendMessage()
+      })
+      
+      close.addEventListener('click', () => {
+        chat.classList.remove('is-active')
+      })
+      
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          
+          var isEscape = false;
+          if ("key" in evt) {
+              isEscape = (evt.key === "Escape" || evt.key === "Esc");
+          } else {
+              isEscape = (evt.keyCode === 27);
+          }
+          if (isEscape) {
+              chat.classList.remove('is-active')
+          }
+
+
+          var isEnter = false;
+          if ("key" in evt) {
+            isEnter = (evt.key === "Enter" || evt.key === "Etr");
+          } else {
+            isEnter = (evt.keyCode === 13);
+          }
+          if (isEnter) {
+            sendMessage()
+          }
+
+          
+      };
+      
+      window.LIVE_CHAT_UI = true
+    }
+  })
+}
+
+chatInit('#chat-app')
+
+function sendMessage() {
+  let message = document.getElementsByClassName('chat-input')[0].value;
+  if(message != "") {
+    Template = '<div class="message"><p class="text">Xmsg</p></div>'
+    document.getElementsByClassName('messages')[0].innerHTML = document.getElementsByClassName('messages')[0].innerHTML + Template.replace('Xmsg', message)
+    document.getElementsByClassName('chat-input')[0].value = "";
+    let messages = document.getElementsByClassName('messages')[0];
+    messages.scrollTop = messages.scrollHeight;
+
+    fetch('chatbotdb.php', {
+      method: 'POST',
+      body: 'text=' + message,
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.text();
+      } else {
+        throw new Error('Error: ' + response.status);
+      }
+    }).then(responseText => {
+      let messages = document.getElementsByClassName('messages')[0];
+      let messageHTML = `<div class="message reply">
+        <p class="text">${responseText}</p>
+      </div>`;
+      messages.innerHTML += messageHTML;
+      document.getElementsByClassName('chat-input')[0].value = ""
+
+      if ('speechSynthesis' in window) {
+        let synth = window.speechSynthesis;
+        let utterance = new SpeechSynthesisUtterance(responseText);
+        utterance.lang = "en-US";
+        utterance.voice = synth.getVoices().filter(function(voice) { return voice.name == 'Google  Hindi'; })[0];
+        synth.speak(utterance);
+      }
+
+      // Auto-scroll to bottom of chat window
+      document.getElementsByClassName('chat-app_content')[0].scrollTop = document.getElementsByClassName('messages')[0].offsetHeight;
+    })
+    
+    .catch(error => {
+      console.error(error);
+    });
+  }
+}
+
+  
+  
+
+</script>
