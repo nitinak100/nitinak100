@@ -1,0 +1,253 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+// Connect to the database
+$host = "localhost";
+$username = "versatileitsolution";
+$password = "versatileitsolution123";
+$database = "versatileitsolution";
+$connection = mysqli_connect($host, $username, $password, $database);
+
+// Check for errors
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Retrieve the data
+$query = "SELECT product_name, SUM(product_price) as total_revenue, COUNT(*) as sales_count FROM payment_detail GROUP BY product_name";
+$result = mysqli_query($connection, $query);
+
+// Analyze the data
+$labels = array();
+$data = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    array_push($labels, $row["product_name"]);
+    array_push($data, $row["total_revenue"]);
+}
+
+// Create the dashboard
+?>
+
+<html>
+<head>
+    <title>Product Sales Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="salesChart"></canvas>
+    <script>
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode($labels); ?>,
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: <?php echo json_encode($data); ?>,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+<!-- Line CHART -->
+
+
+// Retrieve the data
+$query = "SELECT selling_date, SUM(product_price) as total_revenue FROM payment_detail GROUP BY selling_date";
+$result = mysqli_query($connection, $query);
+
+// Analyze the data
+$labels = array();
+$data = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    array_push($labels, $row["selling_date"]);
+    array_push($data, $row["total_revenue"]);
+}
+
+// Create the line chart
+?>
+<html>
+<head>
+    <title>Product Sales Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="salesChart"></canvas>
+    <script>
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: <?php echo json_encode($labels); ?>,
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: <?php echo json_encode($data); ?>,
+                    fill: false,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+<!--Pie Chart:-->
+
+// Retrieve the data
+$query = "SELECT product_name, SUM(product_price) as total_revenue FROM payment_detail GROUP BY product_name";
+$result = mysqli_query($connection, $query);
+
+// Analyze the data
+$labels = array();
+$data = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    array_push($labels, $row["product_name"]);
+    array_push($data, $row["total_revenue"]);
+}
+
+// Create the pie chart
+?>
+<html>
+<head>
+    <title>Product Sales Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="salesChart"></canvas>
+    <script>
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: <?php echo json_encode($labels); ?>,
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: <?php echo json_encode($data); ?>,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+bar chart using Chart.js:
+
+php
+Copy code
+// Connect to the database
+$host = "localhost";
+$username = "yourusername";
+$password = "yourpassword";
+$database = "yourdatabase";
+$connection = mysqli_connect($host, $username, $password, $database);
+
+// Check for errors
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Retrieve the data
+$query = "SELECT product_name, SUM(product_price) as total_revenue, COUNT(*) as sales_count FROM payment_detail GROUP BY product_name";
+$result = mysqli_query($connection, $query);
+
+// Analyze the data
+$labels = array();
+$data = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    array_push($labels, $row["product_name"]);
+    array_push($data, $row["total_revenue"]);
+}
+
+// Create the chart
+?>
+<html>
+<head>
+    <title>Product Sales Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="salesChart"></canvas>
+    <script>
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode($labels); ?>,
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: <?php echo json_encode($data); ?>,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
