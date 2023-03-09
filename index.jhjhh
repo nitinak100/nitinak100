@@ -251,3 +251,80 @@ while ($row = mysqli_fetch_assoc($result)) {
     </script>
 </body>
 </html>
+
+
+<?php
+
+// connect to the database
+$servername = "your_servername";
+$username = "your_username";
+$password = "your_password";
+$dbname = "your_dbname";
+
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// define the filter criteria
+$product_name = $_GET['product_name'] ?? '';
+$billing_state = $_GET['billing_state'] ?? '';
+$selling_date = $_GET['selling_date'] ?? '';
+
+// build the SQL query based on the filter criteria
+$sql = "SELECT * FROM payment_detail WHERE 1=1";
+
+if (!empty($product_name)) {
+    $sql .= " AND product_name = '$product_name'";
+}
+
+if (!empty($billing_state)) {
+    $sql .= " AND billing_state = '$billing_state'";
+}
+
+if (!empty($selling_date)) {
+    $sql .= " AND selling_date = '$selling_date'";
+}
+
+$result = mysqli_query($conn, $sql);
+
+// display the filter form
+echo "<form method='get'>";
+echo "<label for='product_name'>Product Name:</label>";
+echo "<select name='product_name'>";
+echo "<option value=''>Select All</option>";
+echo "<option value='Product A'>Product A</option>";
+echo "<option value='Product B'>Product B</option>";
+echo "<option value='Product C'>Product C</option>";
+echo "</select>";
+echo "<br><br>";
+echo "<label for='billing_state'>Billing State:</label>";
+echo "<select name='billing_state'>";
+echo "<option value=''>Select All</option>";
+echo "<option value='State A'>State A</option>";
+echo "<option value='State B'>State B</option>";
+echo "<option value='State C'>State C</option>";
+echo "</select>";
+echo "<br><br>";
+echo "<label for='selling_date'>Selling Date:</label>";
+echo "<input type='date' name='selling_date'>";
+echo "<br><br>";
+echo "<input type='submit' value='Filter'>";
+echo "</form>";
+
+// display the filtered data in a table
+echo "<table>";
+echo "<tr><th>ID</th><th>Product Name</th><th>Product Price</th><th>Billing State</th><th>Selling Date</th></tr>";
+
+while ($row = mysqli_fetch_assoc($result)) {
+    echo "<tr><td>" . $row["id"] . "</td><td>" . $row["product_name"] . "</td><td>" . $row["product_price"] . "</td><td>" . $row["billing_state"] . "</td><td>" . $row["selling_date"] . "</td></tr>";
+}
+
+echo "</table>";
+
+// close the database connection
+mysqli_close($conn);
+
+?>
+
