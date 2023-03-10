@@ -1,258 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<?php
-// Connect to the database
-$host = "localhost";
-$username = "versatileitsolution";
-$password = "versatileitsolution123";
-$database = "versatileitsolution";
-$connection = mysqli_connect($host, $username, $password, $database);
-
-// Check for errors
-if (!$connection) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Retrieve the data
-$query = "SELECT product_name, SUM(product_price) as total_revenue, COUNT(*) as sales_count FROM payment_detail GROUP BY product_name";
-$result = mysqli_query($connection, $query);
-
-// Analyze the data
-$labels = array();
-$data = array();
-while ($row = mysqli_fetch_assoc($result)) {
-    array_push($labels, $row["product_name"]);
-    array_push($data, $row["total_revenue"]);
-}
-
-// Create the dashboard
-?>
-
-<html>
-<head>
-    <title>Product Sales Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <canvas id="salesChart"></canvas>
-    <script>
-        var ctx = document.getElementById('salesChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($labels); ?>,
-                datasets: [{
-                    label: 'Total Revenue',
-                    data: <?php echo json_encode($data); ?>,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
-</body>
-</html>
-
-
-
-<!-- Line CHART -->
-
-
-// Retrieve the data
-$query = "SELECT selling_date, SUM(product_price) as total_revenue FROM payment_detail GROUP BY selling_date";
-$result = mysqli_query($connection, $query);
-
-// Analyze the data
-$labels = array();
-$data = array();
-while ($row = mysqli_fetch_assoc($result)) {
-    array_push($labels, $row["selling_date"]);
-    array_push($data, $row["total_revenue"]);
-}
-
-// Create the line chart
-?>
-<html>
-<head>
-    <title>Product Sales Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <canvas id="salesChart"></canvas>
-    <script>
-        var ctx = document.getElementById('salesChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: <?php echo json_encode($labels); ?>,
-                datasets: [{
-                    label: 'Total Revenue',
-                    data: <?php echo json_encode($data); ?>,
-                    fill: false,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-</body>
-</html>
-
-
-
-<!--Pie Chart:-->
-
-// Retrieve the data
-$query = "SELECT product_name, SUM(product_price) as total_revenue FROM payment_detail GROUP BY product_name";
-$result = mysqli_query($connection, $query);
-
-// Analyze the data
-$labels = array();
-$data = array();
-while ($row = mysqli_fetch_assoc($result)) {
-    array_push($labels, $row["product_name"]);
-    array_push($data, $row["total_revenue"]);
-}
-
-// Create the pie chart
-?>
-<html>
-<head>
-    <title>Product Sales Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <canvas id="salesChart"></canvas>
-    <script>
-        var ctx = document.getElementById('salesChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: <?php echo json_encode($labels); ?>,
-                datasets: [{
-                    label: 'Total Revenue',
-                    data: <?php echo json_encode($data); ?>,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            }
-        });
-    </script>
-</body>
-</html>
-
-
-bar chart using Chart.js:
-
-php
-Copy code
-// Connect to the database
-$host = "localhost";
-$username = "yourusername";
-$password = "yourpassword";
-$database = "yourdatabase";
-$connection = mysqli_connect($host, $username, $password, $database);
-
-// Check for errors
-if (!$connection) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Retrieve the data
-$query = "SELECT product_name, SUM(product_price) as total_revenue, COUNT(*) as sales_count FROM payment_detail GROUP BY product_name";
-$result = mysqli_query($connection, $query);
-
-// Analyze the data
-$labels = array();
-$data = array();
-while ($row = mysqli_fetch_assoc($result)) {
-    array_push($labels, $row["product_name"]);
-    array_push($data, $row["total_revenue"]);
-}
-
-// Create the chart
-?>
-<html>
-<head>
-    <title>Product Sales Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <canvas id="salesChart"></canvas>
-    <script>
-        var ctx = document.getElementById('salesChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($labels); ?>,
-                datasets: [{
-                    label: 'Total Revenue',
-                    data: <?php echo json_encode($data); ?>,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
-</body>
-</html>
-
-
 <?php
 
 // connect to the database
@@ -287,7 +32,16 @@ if (!empty($selling_date)) {
     $sql .= " AND selling_date = '$selling_date'";
 }
 
+// retrieve the filtered data
 $result = mysqli_query($conn, $sql);
+
+// retrieve the total product sell by date
+$sql_date = "SELECT selling_date, SUM(product_price) as total_sell FROM payment_detail GROUP BY selling_date";
+$result_date = mysqli_query($conn, $sql_date);
+
+// retrieve the total product sell by state
+$sql_state = "SELECT billing_state, SUM(product_price) as total_sell FROM payment_detail GROUP BY billing_state";
+$result_state = mysqli_query($conn, $sql_state);
 
 // display the filter form
 echo "<form method='get'>";
@@ -313,18 +67,31 @@ echo "<br><br>";
 echo "<input type='submit' value='Filter'>";
 echo "</form>";
 
-// display the filtered data in a table
+// display the filtered data and total sell by date and state in a table
 echo "<table>";
 echo "<tr><th>ID</th><th>Product Name</th><th>Product Price</th><th>Billing State</th><th>Selling Date</th></tr>";
 
+// display the filtered data
 while ($row = mysqli_fetch_assoc($result)) {
     echo "<tr><td>" . $row["id"] . "</td><td>" . $row["product_name"] . "</td><td>" . $row["product_price"] . "</td><td>" . $row["billing_state"] . "</td><td>" . $row["selling_date"] . "</td></tr>";
 }
 
+// display the total sell by date
+echo "<tr><td colspan='4'>Total Sell by Date</td></tr>";
+while ($row = mysqli_fetch_assoc($result_date)) {
+    echo "<tr><td></td><td></td><td>" . $row["total_sell"] . "</td><
+
+
+// perform the SQL query to get the summary data
+$sql_summary = "SELECT billing_state, selling_date, COUNT(*) as total_sell FROM payment_detail GROUP BY billing_state, selling_date";
+$result_summary = mysqli_query($conn, $sql_summary);
+
+// display the summary data in a table
+echo "<table>";
+echo "<tr><th>Billing State</th><th>Selling Date</th><th>Total Sell</th></tr>";
+
+while ($row_summary = mysqli_fetch_assoc($result_summary)) {
+    echo "<tr><td>" . $row_summary["billing_state"] . "</td><td>" . $row_summary["selling_date"] . "</td><td>" . $row_summary["total_sell"] . "</td></tr>";
+}
+
 echo "</table>";
-
-// close the database connection
-mysqli_close($conn);
-
-?>
-
