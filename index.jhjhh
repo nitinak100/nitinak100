@@ -95,3 +95,62 @@ while ($row_summary = mysqli_fetch_assoc($result_summary)) {
 }
 
 echo "</table>";
+
+php
+Copy code
+<?php
+$host = 'localhost';
+$user = 'username';
+$password = 'password';
+$dbname = 'database_name';
+
+$conn = mysqli_connect($host, $user, $password, $dbname);
+
+if (!$conn) {
+  die('Could not connect: ' . mysqli_connect_error());
+}
+?>
+Next, execute the SQL queries using the mysqli_query() function:
+
+php
+Copy code
+<?php
+// Total Orders
+$totalOrdersQuery = "SELECT COUNT(*) AS total_orders FROM sales";
+$totalOrdersResult = mysqli_query($conn, $totalOrdersQuery);
+$totalOrdersRow = mysqli_fetch_assoc($totalOrdersResult);
+$totalOrders = $totalOrdersRow['total_orders'];
+
+// Total Sales
+$totalSalesQuery = "SELECT SUM(sales_amount) AS total_sales FROM sales";
+$totalSalesResult = mysqli_query($conn, $totalSalesQuery);
+$totalSalesRow = mysqli_fetch_assoc($totalSalesResult);
+$totalSales = $totalSalesRow['total_sales'];
+
+// Items Sold in a State
+$itemsSoldQuery = "SELECT state, COUNT(*) AS items_sold FROM sales GROUP BY state";
+$itemsSoldResult = mysqli_query($conn, $itemsSoldQuery);
+
+// Items Sold on a Particular Date
+$date = '2023-03-10'; // replace with the date for which you want to get the items sold
+$itemsSoldDateQuery = "SELECT sale_date, COUNT(*) AS items_sold FROM sales WHERE sale_date = '$date' GROUP BY sale_date";
+$itemsSoldDateResult = mysqli_query($conn, $itemsSoldDateQuery);
+?>
+Finally, display the results on the webpage:
+
+php
+Copy code
+<?php
+echo "Total Orders: " . $totalOrders . "<br>";
+echo "Total Sales: " . $totalSales . "<br>";
+
+echo "<h2>Items Sold by State:</h2>";
+while ($row = mysqli_fetch_assoc($itemsSoldResult)) {
+  echo $row['state'] . ": " . $row['items_sold'] . "<br>";
+}
+
+echo "<h2>Items Sold on " . $date . ":</h2>";
+while ($row = mysqli_fetch_assoc($itemsSoldDateResult)) {
+  echo "Date: " . $row['sale_date'] . " - Items Sold: " . $row['items_sold'] . "<br>";
+}
+?>
