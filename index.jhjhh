@@ -1,3 +1,115 @@
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check for connection errors
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Get all unique product names and states
+$product_name_query = "SELECT DISTINCT product_name FROM sales";
+$state_query = "SELECT DISTINCT state FROM sales";
+$product_names = $conn->query($product_name_query);
+$states = $conn->query($state_query);
+
+// Set filter variables
+$product_name_filter = isset($_GET['product_name']) ? $_GET['product_name'] : '';
+$state_filter = isset($_GET['state']) ? $_GET['state'] : '';
+$start_date_filter = isset($_GET['start_date']) ? $_GET['start_date'] : '2022-01-01';
+$end_date_filter = isset($_GET['end_date']) ? $_GET['end_date'] : '2022-12-31';
+
+// Build SQL query with optional filters
+$sql = "SELECT * FROM sales WHERE 1=1";
+
+if (!empty($product_name_filter) && $product_name_filter !== 'all') {
+    $sql .= " AND product_name='$product_name_filter'";
+}
+
+if (!empty($state_filter) && $state_filter !== 'all') {
+    $sql .= " AND state='$state_filter'";
+}
+
+if (!empty($start_date_filter)) {
+    $sql .= " AND sale_date >= '$start_date_filter'";
+}
+
+if (!empty($end_date_filter)) {
+    $sql .= " AND sale_date <= '$end_date_filter'";
+}
+
+// Execute the query and get the results
+$result = $conn->query($sql);
+
+// Display the results in an HTML table
+if ($result->num_rows > 0) {
+    echo "<form method='GET'><label>Product Name: </label><select name='product_name'><option value='all'>All</option>";
+    while($row = $product_names->fetch_assoc()) {
+        $selected = $row["product_name"] === $product_name_filter ? 'selected' : '';
+        echo "<option value='".$row["product_name"]."' ".$selected.">".$row["product_name"]."</option>";
+    }
+    echo "</select><label>State: </label><select name='state'><option value='all'>All</option>";
+    while($row = $states->fetch_assoc()) {
+        $selected = $row["state"] === $state_filter ? 'selected' : '';
+        echo "<option value='".$row["state"]."' ".$selected.">".$row["state"]."</option>";
+    }
+    echo "</select><label>Start Date: </label><input type='date' name='start_date' value='".$start_date_filter."'><label>End Date: </label><input type='date' name='end_date' value='".$end_date_filter."'><button type='submit'>Filter</button></form>";
+    echo "<table><tr><th>ID</th><th>Product Name</th><th>Sales Amount</th><th>State</th><th>Sale Date</th></tr>";
+    while($row = $result->fetch_assoc()) {
+        echo "<tr><td>".$row["id"]."</td><td>".$row["product_name"]."</td><td>".$row["sales_amount"]."</td><td>".$row["state"]."</td><td>".$row["sale_date"]."</td></tr>";
+    }
+    echo "</table>";
+} else {
+    echo "0 results";
+}
+
+// Close the database connection
+$conn->close();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Establish a connection to the database
 $servername = "localhost";
 $username = "username";
